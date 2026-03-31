@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Hackathonlar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .admin-header {
+            background: white;
+            border-radius: 20px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .admin-header h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .admin-header h1 i {
+            margin-right: 12px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+            font-size: 24px;
+        }
+
+        .close-modal {
+            font-size: 32px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Rasm yuklash */
+        .image-upload-area {
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .image-upload-area:hover {
+            border-color: #667eea;
+            background: #f5f3ff;
+        }
+
+        .image-upload-area.drag-over {
+            border-color: #667eea;
+            background: #ede9fe;
+        }
+
+        .image-preview {
+            margin-top: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .remove-image {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .remove-image:hover {
+            transform: scale(1.1);
+        }
+
+        .upload-progress {
+            display: none;
+            margin-top: 10px;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .current-image-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Cards Grid */
+        .hack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .hack-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hack-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .hack-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .hack-body {
+            padding: 20px;
+        }
+
+        .hack-body h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .hack-meta {
+            margin: 12px 0;
+        }
+
+        .hack-meta span {
+            display: block;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .hack-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .hack-status.online {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .hack-status.offline {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .hack-status.coming {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .edit-btn, .delete-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .edit-btn:hover {
+            background: #ffb300;
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .view-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 18px;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 20px;
+            color: #999;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            color: white;
+            animation: slideInRight 0.3s ease;
+            z-index: 2000;
+            font-weight: 500;
+        }
+
+        .toast.success {
+            background: #4caf50;
+        }
+
+        .toast.error {
+            background: #f44336;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hack-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-tachometer-alt"></i> Hackathon Admin Panel</h1>
+            <button class="add-btn" onclick="openAddModal()">
+                <i class="fas fa-plus"></i> Yangi Hackathon qo'shish
+            </button>
+        </div>
+
+        <div id="hackathonsGrid" class="hack-grid">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Yangi Hackathon qo'shish</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="hackathonForm">
+                <input type="hidden" id="hackathonId">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Sarlavha *</label>
+                    <input type="text" id="title" placeholder="Masalan: AI Innovation Hackathon" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="far fa-calendar-alt"></i> Sana *</label>
+                    <input type="text" id="date" placeholder="Masalan: 15 Aprel 2026" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> Tavsif *</label>
+                    <textarea id="description" placeholder="Hackathon haqida qisqacha ma'lumot" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-chart-line"></i> Status</label>
+                    <select id="status">
+                        <option value="online">✅ Online</option>
+                        <option value="offline">❌ Offline</option>
+                        <option value="coming">⏰ Tez orada</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-link"></i> Havola (URL) *</label>
+                    <input type="url" id="link" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Rasm yuklash</label>
+                    <div class="image-upload-area" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #667eea;"></i>
+                        <p>Rasm yuklash uchun bosing yoki faylni bu yerga tashlang</p>
+                        <small style="color: #666;">PNG, JPG, JPEG, GIF, WEBP (max 16MB)</small>
+                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                    </div>
+                    <div class="upload-progress" id="uploadProgress">
+                        <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                    </div>
+                    <div class="image-preview" id="imagePreview" style="display: none;">
+                        <img id="previewImg" src="">
+                        <button type="button" class="remove-image" onclick="removeImage()">×</button>
+                    </div>
+                    <div class="current-image-info" id="currentImageInfo" style="display: none;">
+                        <i class="fas fa-image"></i> Joriy rasm: <span id="currentImagePath"></span>
+                    </div>
+                    <input type="hidden" id="image" value="hackathon/default.jpg">
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-save"></i> Saqlash
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/hackathons';
+        const UPLOAD_URL = 'http://localhost:5000/api/upload-image';
+        let currentEditId = null;
+
+        // Load hackathons
+        async function loadHackathons() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Network error');
+                const hackathons = await response.json();
+                displayHackathons(hackathons);
+            } catch (error) {
+                console.error('Error loading hackathons:', error);
+                document.getElementById('hackathonsGrid').innerHTML = '<div class="loading">❌ Serverga ulanishda xatolik. Iltimos, server ishlayotganligini tekshiring.</div>';
+            }
+        }
+
+        // Display hackathons
+        function displayHackathons(hackathons) {
+            const grid = document.getElementById('hackathonsGrid');
+            if (!hackathons || hackathons.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 20px;"></i><br>Hackathonlar mavjud emas<br><button class="add-btn" style="margin-top: 20px;" onclick="openAddModal()">Yangi qo\'shish</button></div>';
+                return;
+            }
+
+            grid.innerHTML = hackathons.map(hackathon => `
+                <div class="hack-card">
+                    <img src="../${hackathon.image}" alt="${escapeHtml(hackathon.title)}" onerror="this.src='https://via.placeholder.com/300x200?text=Rasm+topilmadi'">
+                    <div class="hack-body">
+                        <h3>${escapeHtml(hackathon.title)}</h3>
+                        <div class="hack-meta">
+                            <span><i class="far fa-calendar-alt"></i> ${escapeHtml(hackathon.date)}</span>
+                            <span><i class="fas fa-rocket"></i> ${escapeHtml(hackathon.description)}</span>
+                        </div>
+                        <div class="hack-status ${hackathon.status}">${getStatusText(hackathon.status)}</div>
+                        <div class="card-actions">
+                            <button class="edit-btn" onclick="openEditModal(${hackathon.id})">
+                                <i class="fas fa-edit"></i> Tahrirlash
+                            </button>
+                            <button class="delete-btn" onclick="deleteHackathon(${hackathon.id})">
+                                <i class="fas fa-trash"></i> O'chirish
+                            </button>
+                        </div>
+                        <a href="${escapeHtml(hackathon.link)}" target="_blank" class="view-link">
+                            <i class="fas fa-external-link-alt"></i> Qatnashish
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'online': '✅ Online',
+                'offline': '❌ Offline',
+                'coming': '⏰ Tez orada'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Rasm yuklash
+        async function uploadImage() {
+            const fileInput = document.getElementById('imageFile');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            // Fayl hajmini tekshirish
+            if (file.size > 16 * 1024 * 1024) {
+                showToast('Rasm hajmi 16MB dan katta bo\'lmasligi kerak!', 'error');
+                return;
+            }
+            
+            // Fayl formatini tekshirish
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                showToast('Faqat PNG, JPG, JPEG, GIF, WEBP formatidagi rasmlar ruxsat etilgan!', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const uploadProgress = document.getElementById('uploadProgress');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            uploadProgress.style.display = 'block';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch(UPLOAD_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    document.getElementById('image').value = result.image_path;
+                    
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = `../${result.image_path}`;
+                    preview.style.display = 'block';
+                    
+                    document.getElementById('currentImageInfo').style.display = 'none';
+                    
+                    showToast('Rasm muvaffaqiyatli yuklandi!', 'success');
+                } else {
+                    showToast(result.error || 'Rasm yuklashda xatolik!', 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('Rasm yuklashda xatolik yuz berdi!', 'error');
+            } finally {
+                uploadProgress.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function removeImage() {
+            document.getElementById('image').value = 'hackathon/default.jpg';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('imageFile').value = '';
+            showToast('Rasm olib tashlandi', 'success');
+        }
+
+        // Open add modal
+        function openAddModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'Yangi Hackathon qo\'shish';
+            document.getElementById('hackathonForm').reset();
+            document.getElementById('hackathonId').value = '';
+            document.getElementById('image').value = 'hackathon/default.jpg';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('currentImageInfo').style.display = 'none';
+            document.getElementById('imageFile').value = '';
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // Open edit modal
+        async function openEditModal(id) {
+            try {
+                const response = await fetch(`${API_URL}/${id}`);
+                const hackathon = await response.json();
+                
+                currentEditId = id;
+                document.getElementById('modalTitle').textContent = 'Hackathonni tahrirlash';
+                document.getElementById('hackathonId').value = hackathon.id;
+                document.getElementById('title').value = hackathon.title;
+                document.getElementById('date').value = hackathon.date;
+                document.getElementById('description').value = hackathon.description;
+                document.getElementById('status').value = hackathon.status;
+                document.getElementById('link').value = hackathon.link;
+                document.getElementById('image').value = hackathon.image;
+                
+                if (hackathon.image && hackathon.image !== 'hackathon/default.jpg') {
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = `../${hackathon.image}`;
+                    preview.style.display = 'block';
+                    
+                    const currentImageInfo = document.getElementById('currentImageInfo');
+                    document.getElementById('currentImagePath').textContent = hackathon.image;
+                    currentImageInfo.style.display = 'block';
+                } else {
+                    document.getElementById('imagePreview').style.display = 'none';
+                    document.getElementById('currentImageInfo').style.display = 'none';
+                }
+                
+                document.getElementById('modal').style.display = 'flex';
+            } catch (error) {
+                console.error('Error loading hackathon:', error);
+                showToast('Xatolik yuz berdi', 'error');
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Save hackathon
+        document.getElementById('hackathonForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('hackathonId').value;
+            const data = {
+                title: document.getElementById('title').value.trim(),
+                date: document.getElementById('date').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                status: document.getElementById('status').value,
+                link: document.getElementById('link').value.trim(),
+                image: document.getElementById('image').value
+            };
+            
+            // Validatsiya
+            if (!data.title || !data.date || !data.description || !data.link) {
+                showToast('Barcha majburiy maydonlarni to\'ldiring!', 'error');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saqlanmoqda...';
+            
+            try {
+                let response;
+                if (id) {
+                    response = await fetch(`${API_URL}/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+                
+                if (response.ok) {
+                    closeModal();
+                    loadHackathons();
+                    showToast(id ? 'Muvaffaqiyatli tahrirlandi!' : 'Muvaffaqiyatli qo\'shildi!', 'success');
+                } else {
+                    const error = await response.json();
+                    showToast('Xatolik: ' + (error.error || 'Noma\'lum xatolik'), 'error');
+                }
+            } catch (error) {
+                console.error('Error saving hackathon:', error);
+                showToast('Xatolik yuz berdi', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Saqlash';
+            }
+        });
+
+        // Delete hackathon
+        async function deleteHackathon(id) {
+            if (confirm('Hackathonni o\'chirishga ishonchingiz komilmi?')) {
+                try {
+                    const response = await fetch(`${API_URL}/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        loadHackathons();
+                        showToast('Muvaffaqiyatli o\'chirildi!', 'success');
+                    } else {
+                        showToast('Xatolik yuz berdi', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting hackathon:', error);
+                    showToast('Xatolik yuz berdi', 'error');
+                }
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Drag and drop
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('imageFile');
+        
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('drag-over');
+            }, false);
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            uploadImage();
+        });
+        
+        fileInput.addEventListener('change', uploadImage);
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Load hackathons on page load
+        loadHackathons();
+    </script>
+</body>
+</html>

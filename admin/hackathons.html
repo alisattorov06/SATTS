@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Hackathon boshqaruvi</title>
+
+    <link rel="stylesheet" href="css/admin.css">
+
+</head>
+
+<body>
+
+    <div class="sidebar">
+
+        <h2>Startup Admin</h2>
+
+        <a href="admin.html">Dashboard</a>
+
+        <a href="applications.html">Arizalar</a>
+
+        <a href="hackathons.html" class="active">
+            Hackathonlar
+        </a>
+
+    </div>
+
+
+    <div class="main">
+
+        <div class="topbar">
+
+            <h1>Hackathon boshqaruvi</h1>
+
+        </div>
+
+
+        <div class="hack-controls">
+
+            <input id="hackName" placeholder="Hackathon nomi">
+
+            <input id="hackDate" placeholder="Sana">
+
+            <button onclick="addHack()" class="btn">
+                Qo'shish
+            </button>
+
+        </div>
+
+
+        <div class="hack-grid" id="hackGrid"></div>
+
+    </div>
+
+
+    <script src="js/admin.js"></script>
+
+</body>
+
+</html>

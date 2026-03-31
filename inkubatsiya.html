@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATTS</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="image/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div id="page-loader">
+
+        <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.3/dist/dotlottie-wc.js" type="module"></script>
+        <dotlottie-wc src="https://lottie.host/0f445894-eb7c-4d99-9862-8f000246a2d2/38sHnmmYuz.lottie"
+            style="width: 300px;height: 300px" autoplay loop></dotlottie-wc>
+
+    </div>
+    
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="image/logo.png" alt="FSTU Venture Logo" height="60px" width="60px">
+            </div>
+            <div class="logo-text">SATTS</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="index.html">Bosh sahifa</a></li>
+            <li><a href="inkubatsiya.html" class="active">Inkubatsiyaga ariza</a></li>
+            <li><a href="hackathons.html">Tanlovlar</a></li>
+            <li><a href="team.html"><i class="fa-solid fa-info-circle"></i> Biz haqimizda</a></li>
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i></a></li>
+        </ul>
+
+        <div class="header-right">
+
+            <button class="application-btn" onclick="window.location.href='https://forms.gle/JFuJ1aykF9N1hriWA'">
+                <span><i class="fa-solid fa-pen-to-square"></i> Ariza qoldirish</span>
+            </button>
+
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="content">
+        <section class="inkubatsiya-hero">
+
+            <div class="ink-left">
+                <img src="image/inkubatsiya.jpg" alt="Startup Inkubatsiya" class="ink-img">
+            </div>
+
+            <div class="ink-right">
+                <h1 class="ink-title">Inkubatsiya Dasturiga Ariza</h1>
+                <p class="ink-desc">
+                    O‘z startapingizni keyingi bosqichga olib chiqish uchun
+                    inkubatsiya dasturimizga qo‘shiling. Mentorlik,
+                    texnik yordam va investitsiya imkoniyatlaridan foydalaning.
+                </p>
+
+                <button class="ink-btn" onclick="window.location.href='https://forms.gle/JFuJ1aykF9N1hriWA'">
+                    <i class="fa-solid fa-rocket"></i>
+                    Ariza qoldirish
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <div class="chatbot-wrapper" onclick="toggleChat()">
+        <dotlottie-wc src="https://lottie.host/56d6c310-71ec-425c-8589-977f7be81808/04kpgDCb7t.lottie" autoplay loop>
+        </dotlottie-wc>
+    </div>
+
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-header">
+            AI Yordamchi
+            <span class="chat-close" onclick="toggleChat()">✕</span>
+        </div>
+
+        <div class="chat-body">
+            <div class="chat-message bot">Salom 👋 Qanday yordam bera olaman?</div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" placeholder="Xabar yozing...">
+            <button><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script src="js/gemini.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.3/dist/dotlottie-wc.js" type="module"></script>
+</body>
+
+</html>

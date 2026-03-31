@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATTS - Hackathonlar</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="image/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .hack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .hack-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+        }
+
+        .hack-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hack-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .hack-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .hack-body {
+            padding: 20px;
+        }
+
+        .hack-body h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .hack-meta {
+            margin: 15px 0;
+        }
+
+        .hack-meta span {
+            display: block;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .hack-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .hack-status.online {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .hack-status.offline {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .hack-status.coming {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .hack-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: transform 0.3s;
+        }
+
+        .hack-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="page-loader">
+        <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.3/dist/dotlottie-wc.js" type="module"></script>
+        <dotlottie-wc src="https://lottie.host/0f445894-eb7c-4d99-9862-8f000246a2d2/38sHnmmYuz.lottie"
+            style="width: 300px;height: 300px" autoplay loop></dotlottie-wc>
+    </div>
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="image/logo.png" alt="FSTU Venture Logo" height="60px" width="60px">
+            </div>
+            <div class="logo-text">SATTS</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="index.html">Bosh sahifa</a></li>
+            <li><a href="inkubatsiya.html">Inkubatsiyaga ariza</a></li>
+            <li><a href="hackathons.html" class="active">Tanlovlar</a></li>
+            <li><a href="team.html"><i class="fa-solid fa-info-circle"></i> Biz haqimizda</a></li>
+            <li><a href="contact.html"><i class="fa-solid fa-headset"></i></a></li>
+        </ul>
+
+        <div class="header-right">
+            <button class="application-btn" onclick="window.location.href='https://forms.gle/JFuJ1aykF9N1hriWA'">
+                <span><i class="fa-solid fa-pen-to-square"></i> Ariza qoldirish</span>
+            </button>
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="content">
+        <section class="hackathons-section">
+            <h1 class="hack-title">Hackathonlar</h1>
+            <div id="hackathonsGrid" class="hack-grid">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div>
+            </div>
+        </section>
+    </main>
+
+    <div class="chatbot-wrapper" onclick="toggleChat()">
+        <dotlottie-wc src="https://lottie.host/56d6c310-71ec-425c-8589-977f7be81808/04kpgDCb7t.lottie" autoplay loop>
+        </dotlottie-wc>
+    </div>
+
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-header">
+            AI Yordamchi
+            <span class="chat-close" onclick="toggleChat()">✕</span>
+        </div>
+        <div class="chat-body">
+            <div class="chat-message bot">Salom 👋 Qanday yordam bera olaman?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Xabar yozing...">
+            <button><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script src="js/gemini.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.3/dist/dotlottie-wc.js" type="module"></script>
+    <script>
+        const API_URL = 'http://localhost:5000/api/hackathons';
+
+        async function loadHackathons() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Network error');
+                const hackathons = await response.json();
+                displayHackathons(hackathons);
+            } catch (error) {
+                console.error('Error loading hackathons:', error);
+                document.getElementById('hackathonsGrid').innerHTML = '<div class="loading">❌ Xatolik yuz berdi. Iltimos, keyinroq urinib ko\'ring.</div>';
+            }
+        }
+
+        function displayHackathons(hackathons) {
+            const grid = document.getElementById('hackathonsGrid');
+
+            if (!hackathons || hackathons.length === 0) {
+                grid.innerHTML = '<div class="loading">📭 Hozircha hackathonlar mavjud emas</div>';
+                return;
+            }
+
+            grid.innerHTML = hackathons.map(hackathon => `
+                <div class="hack-card">
+                    <img src="../${hackathon.image}" alt="${escapeHtml(hackathon.title)}" onerror="this.src='https://via.placeholder.com/300x200?text=Rasm+topilmadi'">
+                    <div class="hack-body">
+                        <h3>${escapeHtml(hackathon.title)}</h3>
+                        <div class="hack-meta">
+                            <span>📅 ${escapeHtml(hackathon.date)}</span>
+                            <span>🚀 ${escapeHtml(hackathon.description)}</span>
+                        </div>
+                        <div class="hack-status ${hackathon.status}">${getStatusText(hackathon.status)}</div>
+                        <a href="${escapeHtml(hackathon.link)}" target="_blank" class="hack-btn">
+                            Qatnashish
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+
+            const cards = document.querySelectorAll(".hack-card");
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("show");
+                    }
+                });
+            }, { threshold: 0.2 });
+            cards.forEach(card => observer.observe(card));
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'online': '✅ Online',
+                'offline': '❌ Offline',
+                'coming': '⏰ Tez orada'
+            };
+            return statusMap[status] || status;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadHackathons();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inkubatsiya Ariza</title>
+    <link rel="icon" href="image/logo1.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/application.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div id="page-loader">
+
+        <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.3/dist/dotlottie-wc.js" type="module"></script>
+        <dotlottie-wc src="https://lottie.host/0f445894-eb7c-4d99-9862-8f000246a2d2/38sHnmmYuz.lottie"
+            style="width: 300px;height: 300px" autoplay loop></dotlottie-wc>
+
+    </div>
+    <div class="application-container">
+
+        <h1 class="app-title"><i class="fas fa-rocket"></i> Inkubatsiya Dasturiga Ariza</h1>
+
+        <form id="applicationForm">
+
+            <div class="section-title">Startup asoschisi ma'lumotlari</div>
+
+            <div class="form-grid">
+
+                <div class="input-group">
+                    <input type="text" required>
+                    <label>Ism</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" required>
+                    <label>Familya</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="number" required>
+                    <label>Tug'ilgan yili</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="tel" required>
+                    <label>Telefon raqam</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" required>
+                    <label>Telegram username</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+
+            </div>
+
+            <div class="section-title">Startup ma'lumotlari</div>
+
+            <div class="form-grid">
+
+                <div class="input-group">
+                    <input type="text" required>
+                    <label>Startup nomi</label>
+                </div>
+
+                <div class="input-group">
+                    <textarea required></textarea>
+                    <label>Qisqacha tavsifi</label>
+                </div>
+
+                <div class="input-group">
+                    <textarea required></textarea>
+                    <label>Raqobatchilardan ustunligi</label>
+                </div>
+
+            </div>
+
+            <div class="section-title">Jamoadoshlar</div>
+
+            <div id="teamContainer"></div>
+
+            <button type="button" class="add-team-btn" onclick="addMember()">
+                <i class="fa-solid fa-plus"></i> Jamoadosh qo'shish
+            </button>
+
+            <button type="submit" class="submit-btn">
+                Arizani yuborish
+            </button>
+
+        </form>
+    </div>
+
+    <script src="js/application.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
