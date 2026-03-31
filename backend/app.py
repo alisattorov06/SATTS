@@ -290,4 +290,4 @@ if __name__ == '__main__':
     print("⚠️  Muhim: Rasm yuklash uchun Pillow kutubxonasi o'rnatilgan bo'lishi kerak")
     print("="*60 + "\n")
     
-    app.run(host='0.0.0.0', port=5000)
+    app.run(...)
